@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Make a new user</title>
+<link rel="stylesheet" type="text/css" href="projectstyle.css">
+<script src = 'jquery.min.js'></script>
+<script src = 'jquery.validate.js'></script>
+<script src = 'jquery.additional_methods.js'></script>
+	<style>
+		#wrap 
+		{ 
+			width: 1050px; 
+			padding: 100px;
+		}
+		label.error 
+		{ 
+			float: none; 
+			color: red; 
+			padding-left: .5em; 
+			vertical-align: top; 
+		}
+	</style>
+</head>
+<body>
+<div id = "wrap">
+	<h1 id = "header">SOAR client website</h1>
+	<form action = "login.php" id = "myform" class = "fancy-form" method = "POST">
+		New username (at least 5 characters):<input name = "newusername" type = "text" pattern = "[A-Za-z0-9]{5,20}", required id = "newuname"><div id = "nameTaken" class = "errormsg"></div>
+		New password (at least 8 characters):<input name = "newpassword" type = "password" pattern = "[A-Za-z0-9]{8,20}", required id = "newpassword"><br>
+		First name:<input name = "newfirstname" type = "text" id = "newfname" pattern = "[A-Za-z]", required><br>
+		Last name:<input name = "newlastname" type = "text" id = "newlname" pattern = "[A-Za-z]", required><br>
+		Phone:<input name = "newphone" type = "text"><br>
+		Street 1:<input name = "newstreet1" type = "text"><br>
+		Street 2:<input name = "newstreet2" type = "text"><br>
+		City:<input name = "newcity" type = "text"><br>
+		State:<input name = "newstate" type = "text"><br>
+		Zip:<input name = "newzip" type = "text"><br>
+		<input type = "submit" id = "submitbutton" value = "Submit"><br>
+	</form>
+	<form action = "login.php" method = "post">
+		<input type = "submit" value = "Back">
+	</form>
+</form>	
+	<script>
+	$("#submitbutton").click
+	(	
+		function() 
+		{
+			var pattern = "[A-Za-z0-9]{5,20}";
+			var usernameinput = $("#newuname").val();
+			$.ajax
+				({
+					url: "getusers.php",
+					dataType: "json",
+					success: function(data, info)
+					{
+						if(data.hasOwnProperty(usernameinput))
+						{
+							//$("#badusername").text(typeof(data));
+							$("#nameTaken").text("That username is already in use.  Please chose a different username.");
+						}
+						else
+						{
+							$("#nameTaken").text("");
+						}
+					}
+				});
+			$( "#myform" ).validate
+			({
+				rules: 
+				{
+                    newusername: {
+                        required: true,
+                        minlength: 5
+                    },
+                    newfname: "required",
+					newlname: "required",
+                    newpassword: {
+                        required: true,
+                        minlength: 8
+                    }, 
+					newphone: {
+						phoneUS: true
+					}
+				}
+				 messages: {
+                    newusername: {
+                        required: "Please provide a username",
+                        minlength: "Your username must be at least 5 characters long"
+                    },
+					newfname: "Please enter your lastname",
+                    newlname: "Please enter your lastname",
+                    newpassword: {
+                        required: "Please provide a password",
+                        minlength: "Your password must be at least 8 characters long"
+                    },
+					newphone:{
+						phoneUS: "Please enter a valid phone number";
+					}
+                },
+			});
+		}
+	);
+	</script>
+</div>
+</body>
+</html>
